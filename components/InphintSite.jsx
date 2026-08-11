@@ -462,6 +462,57 @@ export default function InphintSite() {
       });
     })();
 
+    /* ============================================================
+       MOBILE — touch-friendly animations
+       Runs ONLY on small screens with motion allowed. The desktop
+       code path above is never entered on mobile and is untouched here,
+       so laptop/desktop behaviour is unchanged.
+    ============================================================ */
+    (function(){
+      if(!isSmall || reduce) return;
+
+      // Hero: keep the main image painted (no opacity flash on the LCP image);
+      // give it a slow "breathing" zoom and float the copy in.
+      const front=document.querySelector('#heroScene [data-h="front"]');
+      if(front){
+        const _z=gsap.fromTo(front,{scale:1.06},{scale:1.12,duration:9,ease:'sine.inOut',repeat:-1,yoyo:true});
+        cleanups.push(()=>_z.kill());
+      }
+      const hc=document.getElementById('heroCopy');
+      if(hc) gsap.from(hc.children,{y:26,opacity:0,duration:.7,stagger:.09,ease:'power3.out',delay:.15});
+
+      // Kinetic typography
+      const l1=document.getElementById('kinL1'), l2=document.getElementById('kinL2'), kr=document.getElementById('kinReveal');
+      if(l1) gsap.from(l1,{x:-38,opacity:0,duration:.8,ease:'power3.out',scrollTrigger:{trigger:'#kin',start:'top 80%'}});
+      if(l2) gsap.from(l2,{x:38,opacity:0,duration:.8,ease:'power3.out',scrollTrigger:{trigger:'#kin',start:'top 74%'}});
+      if(kr){ gsap.set(kr,{opacity:0,y:14}); gsap.to(kr,{opacity:1,y:0,duration:.8,ease:'power2.out',scrollTrigger:{trigger:'#kin',start:'top 56%'}}); }
+
+      // Services (stacked panels): reveal + gentle image parallax
+      gsap.utils.toArray('.svc-m-panel').forEach(p=>{
+        gsap.from(p,{y:44,opacity:0,duration:.8,ease:'power3.out',scrollTrigger:{trigger:p,start:'top 84%'}});
+        const im=p.querySelector('img');
+        if(im) gsap.fromTo(im,{scale:1.18},{scale:1,ease:'none',scrollTrigger:{trigger:p,start:'top bottom',end:'bottom top',scrub:true}});
+      });
+
+      // Process (vertical timeline): steps slide in
+      gsap.utils.toArray('.proc-step').forEach(s=>{
+        gsap.from(s,{x:-26,opacity:0,duration:.7,ease:'power3.out',scrollTrigger:{trigger:s,start:'top 85%'}});
+      });
+
+      // Fleet (only where the desktop callout is hidden, <=760px)
+      if(window.matchMedia('(max-width:760px)').matches){
+        const fi=document.getElementById('fleetImg');
+        if(fi) gsap.from(fi,{scale:1.12,opacity:0,duration:1,ease:'power3.out',scrollTrigger:{trigger:'#fleet',start:'top 78%'}});
+        gsap.from('.fleet-labels-m > div',{y:22,opacity:0,duration:.6,stagger:.1,ease:'power3.out',scrollTrigger:{trigger:'.fleet-labels-m',start:'top 88%'}});
+      }
+
+      // Final CTA copy
+      const fc=document.getElementById('finalCopy');
+      if(fc){ gsap.set(fc,{opacity:0,y:30}); gsap.to(fc,{opacity:1,y:0,duration:.9,ease:'power3.out',scrollTrigger:{trigger:'#quote',start:'top 72%'}}); }
+
+      ScrollTrigger.refresh();
+    })();
+
     /* refresh after fonts/images settle */
     const _onLoad=()=>{setTimeout(()=>ScrollTrigger.refresh(),400);};
     window.addEventListener('load',_onLoad);
