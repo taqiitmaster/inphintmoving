@@ -44,6 +44,7 @@ export default function InphintSite() {
       cleanups.push(()=>{try{lenis && lenis.destroy();}catch(e){}});
     }
     gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.config({ ignoreMobileResize: true }); /* avoid jumps when the mobile URL bar shows/hides */
     document.documentElement.classList.add('gsap-ready'); /* engine confirmed → enable reveal choreography */
 
     /* smooth anchor + quote scroll */
@@ -124,8 +125,8 @@ export default function InphintSite() {
       const trans=document.getElementById('heroTrans');
       const transH=trans.querySelector('h2');
 
-      // reduced / mobile: static hero, just show front + copy
-      if(reduce || isSmall){
+      // reduced-motion only: static hero. Mobile now runs the full sequence.
+      if(reduce){
         gsap.set(L.front,{opacity:1,scale:1.02});
         gsap.set([copy,hud,cue],{opacity:1});
         return;
@@ -136,7 +137,7 @@ export default function InphintSite() {
         el.style.opacity=o;
         el.style.zIndex=z;
         el.style.transform=`translate3d(${x}%,0,0) rotateY(${ry}deg) scale(${s})`;
-        el.style.filter=blur?`blur(${blur}px)`:'none';
+        el.style.filter=blur?`blur(${(isSmall?blur*0.5:blur)}px)`:'none';
       }
 
       // cinematic crossfade between two angles with opposite-side arc
@@ -236,7 +237,7 @@ export default function InphintSite() {
         d.dataset.sp=(i%3+1);bg.appendChild(d);boxes.push(d);});
       } else { bg.querySelectorAll('.kin-box').forEach(b=>boxes.push(b)); }
 
-      if(reduce||isSmall){
+      if(reduce){
         gsap.set('#kinReveal',{opacity:1});
         return;
       }
@@ -470,22 +471,8 @@ export default function InphintSite() {
     ============================================================ */
     (function(){
       if(!isSmall || reduce) return;
-
-      // Hero: keep the main image painted (no opacity flash on the LCP image);
-      // give it a slow "breathing" zoom and float the copy in.
-      const front=document.querySelector('#heroScene [data-h="front"]');
-      if(front){
-        const _z=gsap.fromTo(front,{scale:1.06},{scale:1.12,duration:9,ease:'sine.inOut',repeat:-1,yoyo:true});
-        cleanups.push(()=>_z.kill());
-      }
-      const hc=document.getElementById('heroCopy');
-      if(hc) gsap.from(hc.children,{y:26,opacity:0,duration:.7,stagger:.09,ease:'power3.out',delay:.15});
-
-      // Kinetic typography
-      const l1=document.getElementById('kinL1'), l2=document.getElementById('kinL2'), kr=document.getElementById('kinReveal');
-      if(l1) gsap.from(l1,{x:-38,opacity:0,duration:.8,ease:'power3.out',scrollTrigger:{trigger:'#kin',start:'top 80%'}});
-      if(l2) gsap.from(l2,{x:38,opacity:0,duration:.8,ease:'power3.out',scrollTrigger:{trigger:'#kin',start:'top 74%'}});
-      if(kr){ gsap.set(kr,{opacity:0,y:14}); gsap.to(kr,{opacity:1,y:0,duration:.8,ease:'power2.out',scrollTrigger:{trigger:'#kin',start:'top 56%'}}); }
+      // NOTE: hero + kinetic now run their full desktop scroll animations on mobile.
+      // This block only enhances the sections that stay vertical on phones.
 
       // Services (stacked panels): reveal + gentle image parallax
       gsap.utils.toArray('.svc-m-panel').forEach(p=>{

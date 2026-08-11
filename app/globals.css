@@ -505,14 +505,31 @@ body.menu-open .nav-burger span:nth-child(3){transform:translateY(-7px) rotate(-
 /* generic reveal-ready sections keep content visible without JS */
 .section-pad{padding:clamp(80px,10vh,120px) 0}
 
-/* reduce-motion / small screen safety: shrink giant scroll tracks */
+/* mobile: keep the cinematic scroll tracks alive (shorter), just swap vh->svh
+   so the hero/kinetic animations run on phones instead of piling up static */
 @media (max-width:900px){
-  .hero-track{height:auto}
-  .hero-stage{position:relative;height:100svh}
-  .kin-track{height:auto}
-  .kin-stage{position:relative;height:auto;padding:120px 0}
+  .hero-track{height:440vh}
+  .hero-stage{height:100svh}
+  .kin-track{height:200vh}
+  .kin-stage{height:100svh;padding:0}
   .final{height:auto}
   .final-stage{position:relative;height:100svh}
+}
+/* phone-specific typography + clutter control for the hero & kinetic */
+@media (max-width:640px){
+  .hero-h{font-size:clamp(1.6rem,7.4vw,2.3rem);max-width:20ch}
+  .hero-sub{font-size:13.5px;margin-top:14px;max-width:34ch}
+  .hero-copy{bottom:12vh}
+  .hero-copy .eyebrow{margin-bottom:12px}
+  .hero-actions{margin-top:20px;gap:12px}
+  .hero-hud{display:none}
+  .scrollcue{display:none}
+  .hero-grade{background:
+    radial-gradient(120% 90% at 50% 8%,transparent 38%,rgba(0,0,0,.30) 100%),
+    linear-gradient(180deg,rgba(0,0,0,.48) 0%,transparent 24%,transparent 40%,rgba(0,0,0,.84) 100%)}
+  .kin-l1,.kin-l2{font-size:clamp(1.9rem,10vw,3.2rem)}
+  .kin-reveal p{font-size:clamp(1.35rem,6.4vw,2.2rem)}
+  .hero-transition h2{font-size:clamp(2rem,11vw,3.4rem)}
 }
 @media (prefers-reduced-motion:reduce){
   *{scroll-behavior:auto!important}
