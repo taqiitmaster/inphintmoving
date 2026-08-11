@@ -446,19 +446,19 @@ export default function InphintSite() {
     });
 
     /* ============================================================
-       FINAL CTA — truck drives to horizon
+       FINAL CTA — copy reveal
     ============================================================ */
     (function(){
-      if(reduce||isSmall){gsap.set('#finalCopy',{opacity:1});return;}
-      const truck=document.getElementById('finalTruck');
+      const sec=document.getElementById('quote');
       const copy=document.getElementById('finalCopy');
+      /* the old truck-to-horizon track needed a tall section; without it, shrink
+         the desktop section to one screen so there's no empty scroll before the footer */
+      if(sec && !isSmall) sec.style.height='100vh';
+      if(reduce||isSmall){gsap.set(copy,{opacity:1,y:0});return;}
+      gsap.set(copy,{opacity:0,y:40});
       ScrollTrigger.create({
-        trigger:'#quote', start:'top top', end:'bottom bottom', scrub:0.6,
-        onUpdate:self=>{
-          const p=self.progress;
-          gsap.set(truck,{scale:1-p*0.72, y:-p*140, opacity:1-range(p,0.6,1)*0.9, filter:`blur(${p*3}px) brightness(${1-p*0.3})`});
-          gsap.set(copy,{opacity:range(p,0.15,0.45), y:(1-range(p,0.1,0.5))*40});
-        }
+        trigger:'#quote', start:'top 65%',
+        onEnter:()=>gsap.to(copy,{opacity:1,y:0,duration:1,ease:'power3.out'})
       });
     })();
 
@@ -804,7 +804,6 @@ export default function InphintSite() {
       <section className="final" id="quote">
         <div className="final-stage">
           <div className="final-sky"></div>
-          <div className="final-truck" id="finalTruck"><img src="/images/truck_close.jpg" alt="inphint truck departing" /></div>
           <div className="final-road"></div>
           <div className="final-copy" id="finalCopy">
             <span className="eyebrow" style={{justifyContent:'center', marginBottom:'22px'}}>Ready When You Are</span>
