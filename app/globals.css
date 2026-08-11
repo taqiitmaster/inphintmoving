@@ -531,6 +531,27 @@ body.menu-open .nav-burger span:nth-child(3){transform:translateY(-7px) rotate(-
   .kin-reveal p{font-size:clamp(1.35rem,6.4vw,2.2rem)}
   .hero-transition h2{font-size:clamp(2rem,11vw,3.4rem)}
 }
+/* phone spacing pass: kill the oversized section padding + fixed heights
+   that were leaving large empty black gaps between stacked sections */
+@media (max-width:640px){
+  .about,.why,.fleet,.ba,.tst,.num,.area,.faq,
+  .svc-head,.proc-head{
+    padding-top:clamp(46px,9vw,68px)!important;
+    padding-bottom:clamp(46px,9vw,68px)!important;
+  }
+  .svc-head,.proc-head{padding-bottom:0!important}
+  .foot{padding-top:52px}
+  .why-card{min-height:0;padding:28px 24px}
+  .why-grid{gap:14px}
+  .num-cell{padding:26px 14px}
+  .num-cell .big{font-size:clamp(2rem,11vw,2.9rem)}
+  .num-cell .lbl{font-size:12px;margin-top:8px}
+  .tst-head{margin-bottom:24px}
+  .tst-slide{gap:20px}
+  .tst-media{max-width:220px;margin:0 auto}
+  .tst-quote{font-size:clamp(1.15rem,5.6vw,1.5rem)}
+  .about-p{font-size:14.5px}
+}
 @media (prefers-reduced-motion:reduce){
   *{scroll-behavior:auto!important}
   .scrollcue,.cue,.speed{animation:none!important}
